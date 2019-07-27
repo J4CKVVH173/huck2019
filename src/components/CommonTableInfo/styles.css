@@ -1,0 +1,42 @@
+.wrapper {
+    margin: 50px 25px;
+}
+
+.mark {
+    height: 15px;
+    width: 15px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.good {
+    background: #1c9841;
+}
+
+.bad {
+    background: #ff3321;
+}
+
+.no-data {
+    background: #282c34;
+}
+
+.modal-info {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    width: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    text-align: center;
+}
+
+.modal-info>p {
+    margin: 10px 0;
+    text-align: left;
+}
+
+.buttons {
+    text-align: left;
+}
