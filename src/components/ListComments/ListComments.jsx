@@ -5,8 +5,8 @@ import './styles.css';
 
 const ListComments = (props) => {
   const {data} = props;
-  const comments = data.map(v => {
-    return (<div className="comment">
+  const comments = data.map((v, i) => {
+    return (<div className="comment" key={i}>
       <TextField
         defaultValue={v.date}
         label="Дата"

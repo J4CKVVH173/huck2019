@@ -16,12 +16,17 @@ import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 import Overlay from 'pigeon-overlay';
 import Map from 'pigeon-maps';
 
 import ListComments from '../ListComments/ListComments';
+import ClickableRow from './Rows';
+import { getContent } from '../../lib/api';
 import './styles.css';
+
+import { tableMessages, filterRowMessages, tableHeaderRowMessage } from '../../lib/translate';
 
 class CommonTableInfo extends React.Component {
 
@@ -35,26 +40,9 @@ class CommonTableInfo extends React.Component {
         {name: 'status', title: 'Статус'},
       ],
       rows: [
-        {name: 'kek', address: 'cheburek', status: 'ololo'},
-        {name: 'kek', address: 'cheburek', status: 'ololo'},
-        {name: 'kek', address: 'cheburek', status: 'ololo'},
-        {name: 'kek', address: 'cheb5urek', status: 'ololo'},
-        {name: 'kek', address: 'chebu5rek', status: 'ololo'},
-        {name: 'k4ek', address: 'cheburek', status: 'olo4lo'},
-        {name: 'kek3', address: 'cheburek3', status: 'o3lolo'},
-        {name: 'kek2', address: 'cheburek', status: 'ololo'},
-        {name: 'kek2', address: 'cheburek', status: 'ololo'},
-        {name: 'kek2', address: 'cheburek', status: 'ololo'},
-        {name: 'kek2', address: 'cheburek', status: 'ololo'},
-        {name: 'kek2', address: 'cheburek', status: 'ololo'},
-        {name: 'kek2', address: 'cheburek', status: 'ololo'},
-        {name: 'kek2', address: 'cheburek', status: 'ololo'},
-        {name: 'kek2', address: 'cheburek', status: 'ololo'},
-        {name: 'kek2', address: 'cheburek', status: 'ololo'},
-        {name: 'kek2', address: 'cheburek', status: 'ololo'},
-        {name: 'kek2', address: 'cheburek', status: 'ololo'},
-        {name: 'kek2', address: 'cheburek', status: 'lololo'},
-        {name: 'kek2', address: 'cheburek', status: 'Тест'},
+        // {name: 'kek', address: 'cheburek', status: 'ololo', statusText: 'I', statusInfo: 'am', okved: 'a', okpo: 'live'},
+        // {name: 'kek', address: 'cheburek', status: 'ololo', statusText: 'I', statusInfo: 'am', okved: 'a', okpo: 'live'},
+        // {name: 'kek', address: 'cheburek', status: 'ololo', statusText: 'I', statusInfo: 'am', okved: 'a', okpo: 'live'},
       ],
       pageSizes: [5, 10, 15, 25],
       lat: 55.75,
@@ -74,6 +62,7 @@ class CommonTableInfo extends React.Component {
       address: '',
       comments: [],
       isOpen: false,
+      loading: true,
     };
   }
   // <Overlay anchor={position}>
@@ -85,19 +74,56 @@ class CommonTableInfo extends React.Component {
       let status = 'no-data';
       if (v.status === 'good') status = 'good';
       if (v.status === 'bad') status = 'bad';
-      const data = {
-
-      };
       return (
         <Overlay anchor={position}>
-          <div className={`mark ${status}`}/>
+          <div className={`mark ${status}`} onClick={() => this.openModalWithData(v)} />
         </Overlay>
       )
     });
     return marks;
   };
 
+  componentDidMount() {
+    getContent('test').then(
+      data => {
+        const rows = data;
+        const marks = this.generateMarks(data);
+        this.setState({ rows, marks, loading: false })
+      }
+    )
+  }
+
   closeModal = () => this.setState({ isOpen: false });
+
+  openModalWithData = data => {
+    const {
+      statusText,
+      statusInfo,
+      name,
+      address,
+      okved,
+      okpo,
+      opf,
+      site,
+      inst,
+      vk,
+      comments,
+    } = data;
+    this.setState(state => ({
+      statusText: statusText || '',
+      statusInfo: statusInfo || '',
+      name: name || '',
+      address: address || '',
+      okved: okved || '',
+      okpo: okpo || '',
+      opf: opf || '',
+      site: site || '',
+      inst: inst || '',
+      vk: vk || '',
+      comments: comments || [],
+      isOpen: true,
+    }))
+  };
 
   render() {
     const {
@@ -117,6 +143,7 @@ class CommonTableInfo extends React.Component {
       vk,
       comments,
       isOpen,
+      loading,
     } = this.state;
     const t = {
       name: 'name',
@@ -143,22 +170,24 @@ class CommonTableInfo extends React.Component {
       <div className="wrapper">
         <Map defaultCenter={position} defaultZoom={zoom} height={400}>
           <Overlay anchor={position} >
-            <div className={`mark ${status}`} onClick={() => this.setState({ ...t, isOpen: true})}/>
+            <div className={`mark ${status}`} onClick={() => this.openModalWithData(t)}/>
           </Overlay>
           {marks}
         </Map>
-        <Paper>
+        {loading && <LinearProgress />}
+        <Paper className="blur">
           <Grid
             rows={rows}
             columns={columns}
+
           >
             <SortingState/>
             <IntegratedSorting/>
             <FilteringState defaultFilters={[]}/>
             <IntegratedFiltering/>
-            <VirtualTable/>
-            <TableHeaderRow showSortingControls/>
-            <TableFilterRow/>
+            <VirtualTable messages={tableMessages} rowComponent={rowData => ClickableRow(rowData, this.openModalWithData)} />
+            <TableHeaderRow messages={tableHeaderRowMessage} showSortingControls/>
+            <TableFilterRow messages={filterRowMessages} />
           </Grid>
         </Paper>
         <Modal open={isOpen} onClose={this.closeModal}>
