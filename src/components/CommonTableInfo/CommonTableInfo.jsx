@@ -15,6 +15,7 @@ import {
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import Link from '@material-ui/core/Link';
 
 import Overlay from 'pigeon-overlay';
 import Map from 'pigeon-maps';
@@ -70,6 +71,7 @@ class CommonTableInfo extends React.Component {
       vk: '',
       name: '',
       address: '',
+      comments: [],
       isOpen: false,
     };
   }
@@ -96,6 +98,8 @@ class CommonTableInfo extends React.Component {
 
   closeModal = () => this.setState({ isOpen: false });
 
+  generateComments = (arrayOfComments) => {};
+
   render() {
     const {
       columns,
@@ -106,11 +110,18 @@ class CommonTableInfo extends React.Component {
       statusInfo,
       name,
       address,
+      okved,
+      okpo,
+      opf,
+      site,
+      inst,
+      vk,
       isOpen,
     } = this.state;
     const t = {
       name: 'name', address: 'address',
-      okved: 'okved', okpo: 'okpo', opf: 'opf', site: 'site', inst: 'inst', vk: 'vk', statusText: 'Статус текст'
+      okved: 'okved', okpo: 'okpo', opf: 'opf', site: 'https://google.com', inst: 'inst', vk: 'vk', statusText: 'Статус текст',
+      statusInfo: 'asdasdasdasdasd asdasdasdasd asdasdasdasda asdasdasda asdasdadsa asdasdasdad asdasd'
     };
     const position = [this.state.lat, this.state.lng];
     const status = 'no-data';
@@ -137,7 +148,7 @@ class CommonTableInfo extends React.Component {
           </Grid>
         </Paper>
         <Modal open={isOpen}>
-          <Paper className="modal-info">
+          <div className="modal-info">
             <h3>Информация о компании</h3>
             <TextField
               defaultValue={statusText}
@@ -147,15 +158,75 @@ class CommonTableInfo extends React.Component {
                 readOnly: true,
               }}
             />
-            <p>
-              Адресс: {address};
-            </p>
+            <TextField
+              defaultValue={statusInfo}
+              label="Статусная информация"
+              multiline
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+            <TextField
+              defaultValue={name}
+              label="Наименование"
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+            <TextField
+              defaultValue={address}
+              label="Адрес"
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+            <TextField
+              defaultValue={okved}
+              label="ОКВЕД"
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+            <TextField
+              defaultValue={okpo}
+              label="ОКПО"
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+            <TextField
+              defaultValue={opf}
+              label="ОПФ"
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+            <div className="link-wrapper">
+              <Link href={site} >
+                Переход на сайт
+              </Link>
+              <Link href={inst} >
+                Инстаграм
+              </Link>
+              <Link href={vk} >
+                Вконтакте
+              </Link>
+            </div>
+            <p>Отзывы:</p>
+            <div className="comments">
+            </div>
             <div className="buttons">
               <Button variant="contained" color="primary" onClick={this.closeModal}>
                 Закрыть
               </Button>
             </div>
-          </Paper>
+          </div>
         </Modal>
       </div>
     );
