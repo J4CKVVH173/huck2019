@@ -20,6 +20,7 @@ import Link from '@material-ui/core/Link';
 import Overlay from 'pigeon-overlay';
 import Map from 'pigeon-maps';
 
+import ListComments from '../ListComments/ListComments';
 import './styles.css';
 
 class CommonTableInfo extends React.Component {
@@ -98,8 +99,6 @@ class CommonTableInfo extends React.Component {
 
   closeModal = () => this.setState({ isOpen: false });
 
-  generateComments = (arrayOfComments) => {};
-
   render() {
     const {
       columns,
@@ -116,12 +115,27 @@ class CommonTableInfo extends React.Component {
       site,
       inst,
       vk,
+      comments,
       isOpen,
     } = this.state;
     const t = {
-      name: 'name', address: 'address',
-      okved: 'okved', okpo: 'okpo', opf: 'opf', site: 'https://google.com', inst: 'inst', vk: 'vk', statusText: 'Статус текст',
-      statusInfo: 'asdasdasdasdasd asdasdasdasd asdasdasdasda asdasdasda asdasdadsa asdasdasdad asdasd'
+      name: 'name',
+      address: 'address',
+      okved: 'okved',
+      okpo: 'okpo',
+      opf: 'opf',
+      site: 'https://google.com',
+      inst: 'inst',
+      vk: 'vk',
+      statusText: 'Статус текст',
+      statusInfo: 'asdasdasdasdasd asdasdasdasd asdasdasdasda asdasdasda asdasdadsa asdasdasdad asdasd',
+      comments: [
+        {date: '123', rating: '5', comment: 'a lot of shit about some placeфщоыфзщвоа флыовлфыв фыаоы фывывфыв  фывф'},
+        {date: '123', rating: '5', comment: 'a lot of shit about some place'},
+        {date: '123', rating: '5', comment: 'a lot of shit about some place'},
+        {date: '123', rating: '5', comment: 'a lot of shit about some place'},
+        {date: '123', rating: '5', comment: 'a lot of shit about some place'},
+      ]
     };
     const position = [this.state.lat, this.state.lng];
     const status = 'no-data';
@@ -147,10 +161,11 @@ class CommonTableInfo extends React.Component {
             <TableFilterRow/>
           </Grid>
         </Paper>
-        <Modal open={isOpen}>
+        <Modal open={isOpen} onClose={this.closeModal}>
           <div className="modal-info">
             <h3>Информация о компании</h3>
             <TextField
+              className="text-field"
               defaultValue={statusText}
               label="Статус"
               fullWidth
@@ -159,6 +174,7 @@ class CommonTableInfo extends React.Component {
               }}
             />
             <TextField
+              className="text-field"
               defaultValue={statusInfo}
               label="Статусная информация"
               multiline
@@ -168,6 +184,7 @@ class CommonTableInfo extends React.Component {
               }}
             />
             <TextField
+              className="text-field"
               defaultValue={name}
               label="Наименование"
               fullWidth
@@ -176,6 +193,7 @@ class CommonTableInfo extends React.Component {
               }}
             />
             <TextField
+              className="text-field"
               defaultValue={address}
               label="Адрес"
               fullWidth
@@ -184,6 +202,7 @@ class CommonTableInfo extends React.Component {
               }}
             />
             <TextField
+              className="text-field"
               defaultValue={okved}
               label="ОКВЕД"
               fullWidth
@@ -192,6 +211,7 @@ class CommonTableInfo extends React.Component {
               }}
             />
             <TextField
+              className="text-field"
               defaultValue={okpo}
               label="ОКПО"
               fullWidth
@@ -200,6 +220,7 @@ class CommonTableInfo extends React.Component {
               }}
             />
             <TextField
+              className="text-field"
               defaultValue={opf}
               label="ОПФ"
               fullWidth
@@ -218,8 +239,9 @@ class CommonTableInfo extends React.Component {
                 Вконтакте
               </Link>
             </div>
-            <p>Отзывы:</p>
+            <h3 style={{ textAlign: 'left' }}>Отзывы:</h3>
             <div className="comments">
+              <ListComments data={comments}/>
             </div>
             <div className="buttons">
               <Button variant="contained" color="primary" onClick={this.closeModal}>

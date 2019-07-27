@@ -60,4 +60,15 @@
     border: 1px solid black;
     border-radius: 5px;
     margin: 10px 0;
+    overflow: auto;
+    text-align: left;
+}
+
+.comments>div {
+    padding: 20px 10px;
+    margin: 0 10px;
+}
+
+.text-field {
+    margin: 10px 0!important;
 }
