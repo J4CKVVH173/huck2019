@@ -23,7 +23,8 @@ import Map from 'pigeon-maps';
 
 import ListComments from '../ListComments/ListComments';
 import ClickableRow from './Rows';
-import { getContent } from '../../lib/api';
+import {TableCell} from './Cells';
+import jsonResponse from './data';
 import './styles.css';
 
 import vkLink from '../icons/vk.png';
@@ -41,15 +42,11 @@ class CommonTableInfo extends React.Component {
 
     this.state = {
       columns: [
-        {name: 'name', title: 'Наименование'},
+        {name: 'company_name', title: 'Наименование'},
         {name: 'address', title: 'Адрес'},
         {name: 'status', title: 'Статус'},
       ],
-      rows: [
-        // {name: 'kek', address: 'cheburek', status: 'ololo', statusText: 'I', statusInfo: 'am', okved: 'a', okpo: 'live'},
-        // {name: 'kek', address: 'cheburek', status: 'ololo', statusText: 'I', statusInfo: 'am', okved: 'a', okpo: 'live'},
-        // {name: 'kek', address: 'cheburek', status: 'ololo', statusText: 'I', statusInfo: 'am', okved: 'a', okpo: 'live'},
-      ],
+      rows: [],
       pageSizes: [5, 10, 15, 25],
       lat: 55.78,
       lng: 37.76,
@@ -63,39 +60,43 @@ class CommonTableInfo extends React.Component {
       opf: '',
       site: '',
       inst: '',
+      inn: '',
       vk: '',
       name: '',
       address: '',
       comments: [],
       isOpen: false,
       loading: true,
+      status: 1,
     };
   }
 
   componentDidMount() {
-    getContent('test').then(
-      data => {
-        console.log(data);
-        const rows = data;
-        const marks = this.generateMarks(data);
-        this.setState({ rows, marks, loading: false })
-      }
-    ).catch(
-      e => console.log(e)
-    )
+    // getContent('test').then(
+    //   response => response.data).then( data => {
+    //     console.log(data);
+    //     const rows = data;
+    //     const marks = this.generateMarks(data);
+    //     this.setState({ rows, marks, loading: false })
+    //   }
+    // ).catch(
+    //   e => console.log(e)
+    // )
+    const rows = jsonResponse;
+    const marks = this.generateMarks(jsonResponse);
+    this.setState({ rows, marks, loading: false })
   }
 
-  // <Overlay anchor={position}>
-  //     <div className="good"/>
-  //   </Overlay>;
   generateMarks = (data) => {
-    const marks = data.map(v => {
-      const position = [v.lat, v.lng];
+    const marks = data.map((v, i) => {
+      const position = [v.lat || 0, v.long || 0];
+      if (i === 100) console.log(position);
       let status = 'no-data';
-      if (v.status === 'good') status = 'good';
-      if (v.status === 'bad') status = 'bad';
+      if (v.status === 1) status = 'good';
+      if (v.status === 2) status = 'so-so';
+      if (v.status === 3) status = 'bad';
       return (
-        <Overlay anchor={position}>
+        <Overlay anchor={position} key={v.id}>
           <div className={`mark ${status}`} onClick={() => this.openModalWithData(v)} />
         </Overlay>
       )
@@ -107,30 +108,46 @@ class CommonTableInfo extends React.Component {
 
   openModalWithData = data => {
     const {
-      statusText,
-      statusInfo,
-      name,
+      status_text,
+      status,
+      company_name,
       address,
       okved,
       okpo,
+      inn,
       opf,
-      site,
-      inst,
+      website,
+      instagram,
       vk,
-      comments,
+      comment,
+      rating,
+      date,
     } = data;
+    const zipComments = [];
+    if (comment !== undefined) {
+      for (let i = 0; i < comment.length; i++) {
+        zipComments.push({
+          comment: comment[i],
+          rating: rating[i],
+          date: date[i],
+        })
+      }
+    }
+    const statusMap = ['Нет нарушений', 'Незначительные нарушения', 'Серьезные нарушения'];
     this.setState(state => ({
-      statusText: statusText || '',
-      statusInfo: statusInfo || '',
-      name: name || '',
+      statusText: statusMap[status - 1] || '',
+      statusInfo: status_text || '',
+      status: status || 1,
+      name: company_name || '',
       address: address || '',
       okved: okved || '',
+      inn: inn || '',
       okpo: okpo || '',
       opf: opf || '',
-      site: site || '',
-      inst: inst || '',
+      site: website || '',
+      inst: instagram || '',
       vk: vk || '',
-      comments: comments || [],
+      comments: zipComments,
       isOpen: true,
     }))
   };
@@ -148,47 +165,26 @@ class CommonTableInfo extends React.Component {
       okved,
       okpo,
       opf,
+      inn,
       site,
       inst,
       vk,
       comments,
+      status,
       isOpen,
       loading,
     } = this.state;
 
-    const t = {
-      name: 'name',
-      address: 'address',
-      okved: 'okved',
-      okpo: 'okpo',
-      opf: 'opf',
-      site: '',
-      inst: 'inst',
-      vk: '',
-      statusText: 'Статус текст',
-      statusInfo: 'asdasdasdasdasd asdasdasdasd asdasdasdasda asdasdasda asdasdadsa asdasdasdad asdasd',
-      comments: [
-        {date: '123', rating: '5', comment: 'a lot of shit about some placeфщоыфзщвоа флыовлфыв фыаоы фывывфыв  фывф'},
-        {date: '123', rating: '5', comment: 'a lot of shit about some place'},
-        {date: '123', rating: '5', comment: 'a lot of shit about some place'},
-        {date: '123', rating: '5', comment: 'a lot of shit about some place'},
-        {date: '123', rating: '5', comment: 'a lot of shit about some place'},
-      ]
-    };
-    const status = 'no-data';
-    console.log(site);
+    const statusColors = ['#1c9841', '#ffd04c', '#ff3321'];
 
     const position = [this.state.lat, this.state.lng];
     return (
       <div className="wrapper">
         <Map defaultCenter={position} defaultZoom={zoom} height={400}>
-          <Overlay anchor={position} >
-            <div className={`mark ${status}`} onClick={() => this.openModalWithData(t)}/>
-          </Overlay>
           {marks}
         </Map>
         {loading && <LinearProgress />}
-        <Paper className="blur">
+        <Paper className={loading ? 'blur' : ''}>
           <Grid
             rows={rows}
             columns={columns}
@@ -197,7 +193,11 @@ class CommonTableInfo extends React.Component {
             <IntegratedSorting/>
             <FilteringState defaultFilters={[]}/>
             <IntegratedFiltering/>
-            <VirtualTable messages={tableMessages} rowComponent={rowData => ClickableRow(rowData, this.openModalWithData)} />
+            <VirtualTable
+              cellComponent={TableCell}
+              messages={tableMessages}
+              rowComponent={rowData => ClickableRow(rowData, this.openModalWithData)}
+            />
             <TableHeaderRow messages={tableHeaderRowMessage} showSortingControls/>
             <TableFilterRow messages={filterRowMessages} />
           </Grid>
@@ -208,6 +208,7 @@ class CommonTableInfo extends React.Component {
             <TextField
               className="text-field"
               defaultValue={statusText}
+              style={{ background: `${statusColors[status - 1]}` }}
               label="Статус"
               fullWidth
               InputProps={{
@@ -246,6 +247,15 @@ class CommonTableInfo extends React.Component {
               className="text-field"
               defaultValue={okved}
               label="ОКВЕД"
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+            <TextField
+              className="text-field"
+              defaultValue={inn}
+              label="ИНН"
               fullWidth
               InputProps={{
                 readOnly: true,
