@@ -3,10 +3,14 @@
 }
 
 .mark {
-    height: 15px;
-    width: 15px;
-    border-radius: 15px;
+    height: 11px;
+    width: 11px;
+    border-radius: 11px;
     cursor: pointer;
+}
+
+.mark:hover {
+    box-shadow: 2px -2px #c2c2c2;
 }
 
 .good {
@@ -84,4 +88,14 @@
 
 .blur {
     filter: blur(1px);
+}
+
+.disable-link {
+    cursor: not-allowed!important;
+}
+
+.icon {
+    height: 42px;
+    width: 42px;
+    border-radius: 3px;
 }

@@ -5,7 +5,7 @@ export function getContent(url, sendParams) {
     let params = sendParams;
     if (!sendParams) params = {};
     session
-      .get(`${url}/`, {params})
+      .get(`${url}`, {params})
       .then(post => resolve(post))
       .catch(e => {
         reject(e);

@@ -5,7 +5,7 @@ const xsrfHeaderName = 'X-CSRFToken';
 
 const timeout = 100000;
 
-let baseURL = 'http://localhost:8000';
+let baseURL = 'http://localhost:8080';
 
 const headers = {
   'Content-Type': 'application/json',

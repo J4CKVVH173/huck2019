@@ -26,6 +26,12 @@ import ClickableRow from './Rows';
 import { getContent } from '../../lib/api';
 import './styles.css';
 
+import vkLink from '../icons/vk.png';
+import vkDisable from '../icons/vkDisable.png';
+import www from '../icons/www.png';
+import instagram from '../icons/instagram.png';
+import instagramDisable from '../icons/instagramDisable.png';
+
 import { tableMessages, filterRowMessages, tableHeaderRowMessage } from '../../lib/translate';
 
 class CommonTableInfo extends React.Component {
@@ -45,9 +51,9 @@ class CommonTableInfo extends React.Component {
         // {name: 'kek', address: 'cheburek', status: 'ololo', statusText: 'I', statusInfo: 'am', okved: 'a', okpo: 'live'},
       ],
       pageSizes: [5, 10, 15, 25],
-      lat: 55.75,
-      lng: 37.61,
-      zoom: 11,
+      lat: 55.78,
+      lng: 37.76,
+      zoom: 14,
       show: false,
       marks: null,
       statusText: '',
@@ -65,6 +71,20 @@ class CommonTableInfo extends React.Component {
       loading: true,
     };
   }
+
+  componentDidMount() {
+    getContent('test').then(
+      data => {
+        console.log(data);
+        const rows = data;
+        const marks = this.generateMarks(data);
+        this.setState({ rows, marks, loading: false })
+      }
+    ).catch(
+      e => console.log(e)
+    )
+  }
+
   // <Overlay anchor={position}>
   //     <div className="good"/>
   //   </Overlay>;
@@ -82,16 +102,6 @@ class CommonTableInfo extends React.Component {
     });
     return marks;
   };
-
-  componentDidMount() {
-    getContent('test').then(
-      data => {
-        const rows = data;
-        const marks = this.generateMarks(data);
-        this.setState({ rows, marks, loading: false })
-      }
-    )
-  }
 
   closeModal = () => this.setState({ isOpen: false });
 
@@ -145,15 +155,16 @@ class CommonTableInfo extends React.Component {
       isOpen,
       loading,
     } = this.state;
+
     const t = {
       name: 'name',
       address: 'address',
       okved: 'okved',
       okpo: 'okpo',
       opf: 'opf',
-      site: 'https://google.com',
+      site: '',
       inst: 'inst',
-      vk: 'vk',
+      vk: '',
       statusText: 'Статус текст',
       statusInfo: 'asdasdasdasdasd asdasdasdasd asdasdasdasda asdasdasda asdasdadsa asdasdasdad asdasd',
       comments: [
@@ -164,8 +175,10 @@ class CommonTableInfo extends React.Component {
         {date: '123', rating: '5', comment: 'a lot of shit about some place'},
       ]
     };
-    const position = [this.state.lat, this.state.lng];
     const status = 'no-data';
+    console.log(site);
+
+    const position = [this.state.lat, this.state.lng];
     return (
       <div className="wrapper">
         <Map defaultCenter={position} defaultZoom={zoom} height={400}>
@@ -179,7 +192,6 @@ class CommonTableInfo extends React.Component {
           <Grid
             rows={rows}
             columns={columns}
-
           >
             <SortingState/>
             <IntegratedSorting/>
@@ -258,14 +270,15 @@ class CommonTableInfo extends React.Component {
               }}
             />
             <div className="link-wrapper">
-              <Link href={site} >
-                Переход на сайт
+              <Link href={site || '#'} className={site ? '' : 'disable-link'}>
+                <img src={www} alt="vk" className="icon"/>
               </Link>
-              <Link href={inst} >
-                Инстаграм
+
+              <Link href={inst || '#'} className={inst ? '' : 'disable-link'} >
+                <img src={inst ? instagram : instagramDisable} alt="inst" className="icon"/>
               </Link>
-              <Link href={vk} >
-                Вконтакте
+              <Link href={vk || '#'} className={vk ? '' : 'disable-link'} >
+                <img src={vk ? vkLink : vkDisable} alt="vk" className="icon"/>
               </Link>
             </div>
             <h3 style={{ textAlign: 'left' }}>Отзывы:</h3>
