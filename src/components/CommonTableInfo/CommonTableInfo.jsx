@@ -72,6 +72,7 @@ class CommonTableInfo extends React.Component {
   }
 
   componentDidMount() {
+    // ToDo реализовать загрузку с бэка путем раскоментирования и указания верного урла. axios настроен
     // getContent('test').then(
     //   response => response.data).then( data => {
     //     console.log(data);
